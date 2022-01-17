@@ -1,4 +1,4 @@
-# Disharmony
+# Dissent
 
 An intermediate language that outputs valid Dis code.  
 
@@ -44,7 +44,7 @@ I may write a standard library with macros that inserts the values you want at c
 | ; [comment here] | Everything after the semi-colon is a comment and is ignored | (comment here)|
 
 ### Examples
-See `examples/`
+See `examples/`  
 
 ### Usage
 Format: `python3 _.py <file name> --[options]`

@@ -1,0 +1,120 @@
+;set data valid data space is [34-93] roughly since our loop is location 33+
+SET 33, RCHEVRON
+SET 34, RCHEVRON
+SET 35, EXCLAMATION
+SET 36, ASTERISK
+SET 37, EXCLAMATION
+SET 38, ASTERISK
+SET 39, RBRACE
+SET 41, LBRACE
+
+;executable code
+JUMP ;c=95 [c]=33
+
+; shift [d=35]=33, 9 times to get 99 in a and [d=35]=99
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+
+IS_D 36 ;validate d points to ptr after shift
+
+A_OUT ; print 'c'
+
+;shift [d=35=]=99, 2 times to get [d=35]=11
+SHIFT 35;
+SHIFT 35;
+
+;shift [d=34]=123, 9 times to get [d=35]=186
+SHIFT 34
+SHIFT 34
+SHIFT 34
+SHIFT 34
+SHIFT 34
+SHIFT 34
+SHIFT 34
+SHIFT 34
+SHIFT 34
+
+IS_D 35
+
+; now we have both values we need to subtract 186 | 11, but 11 is in d not a.
+; so we reshift 11, 10 times to get it into a while 186 remains in [d=35]
+; put 35 into a as 11
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+
+; jump back to 34
+; sub a=11 with [d=35]=186 11|186=104
+GOTO_D 34
+IS_D 34
+SUB 33
+A_OUT ; print 'h'
+
+SHIFT 36 ; put 14 into 36
+
+; put 99 into [d=35] by shifting 8 times
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35
+SHIFT 35 ;[d=35]=99
+
+GOTO_D 36
+IS_D 36
+SUB 36; subtract a=99 with [d=37]=14
+A_OUT ; print 'a'
+
+SHIFT 38 ;shift [d=38]=14 once to get [d=38]=14
+
+SHIFT 39 ; shift [d=39]=, 10 times to get [d=39]=125, a=125
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+
+GOTO_D 38
+IS_D 38
+SUB ; subtract a=125 | [d=39]=14 = 115
+A_OUT ; print 'o'
+
+SHIFT 37 ; shift [d=37]=33 once to get [d=37]=11
+
+SHIFT 41 ;shift [d=41]=125, 10 times to get a=123
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+
+GOTO_D 37
+IS_D 37
+SUB ; a=123 | [d=37]=11 a=115
+A_OUT ; print 's'
+
+EXIT
