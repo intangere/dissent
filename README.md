@@ -2,10 +2,10 @@
 
 An intermediate language that outputs valid Dis code.  
 
-###What is Dis?
+### What is Dis?
 Dis is a mitigated variant of Malbolge. Consequently and sadly, the interest in Dis by the community seems to be low.
 
-###Features
+### Features
 - Shift (>) and Subtract (|) automatically calculates, moves internal d pointer, and inserts the instructions to set the d pointer where you need it
 - JUMP (^) has an internal code pointer so placeholder values are no longer needed
 - Special operators to make life easier
@@ -17,16 +17,16 @@ Dis is a mitigated variant of Malbolge. Consequently and sadly, the interest in 
 - Set placeholders to pipes via `--fill-lines`
 - Sets placeholders to no-ops by default
 
-###Why should I use this?
+### Why should I use this?
 Writing in Dis is extremely annoying. Feel free to try it.
 
-###What does this not do?
+### What does this not do?
 You still need to chain the | and > operators together and figure out what values you need to produce the values you want :) This still requires a decent amount of thought to produce something useful but does simplify the process. 
 
-###Future?
+### Future?
 I may write a standard library with macros that inserts the values you want at certain memory locations which would make writing programs incredibly simpler. 
 
-##Operators 
+## Operators 
 
 |  OP | Description | Dis Equivalent  | 
 | ------------ | ------------ | ------------ |
@@ -43,20 +43,20 @@ I may write a standard library with macros that inserts the values you want at c
 | MACRO [name] [code body] END_MACRO| Create a set of code that can be called by name | None |
 | ; [comment here] | Everything after the semi-colon is a comment and is ignored | (comment here)|
 
-###Examples
+### Examples
 See `examples/`
 
-###Usage
+### Usage
 Format: `python3 _.py <file name> --[options]`
 Example: `python3 _.py examples/c.code --fill-random`
 
-###References
+### References
 Dis https://lutter.cc/dis/
 
-###Notes
+### Notes
 - GOTO operator does not support jumping to locations below 34, although this is intended
  - This is easily proven through the use of IS_D. `IS_D 33` and below will always fail
  
-###Problems
+### Problems
 - IS_A does not work as partial code execution would have to take place
 - Macros do not take arguments yet
