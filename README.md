@@ -47,8 +47,8 @@ I may write a standard library with macros that inserts the values you want at c
 See `examples/`  
 
 ### Usage
-Format: `python3 _.py <file name> --[options]`
-Example: `python3 _.py examples/c.code --fill-random`
+Format: `python3 dissent.py <file name> --[options]`
+Example: `python3 dissent.py examples/999.code --fill-random`
 
 ### References
 Dis https://lutter.cc/dis/
