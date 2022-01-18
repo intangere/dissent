@@ -1,0 +1,75 @@
+;set data valid data space is [34-93] roughly since our loop is location 33+
+SET 33, RCHEVRON
+SET 34, ASTERISK
+SET 35, EXCLAMATION
+SET 36, ASTERISK
+SET 37, EXCLAMATION
+SET 38, ASTERISK
+SET 39, RBRACE
+SET 41, LBRACE
+SET 42, ASTERISK
+
+;executable code
+JUMP ;c=95 [c]=33
+
+SHIFT 37 ; shift [d=37]=33 once to get [d=37]=11
+
+SHIFT 41 ;shift [d=41]=125, 10 times to get a=123
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+SHIFT 41
+
+GOTO_D 37
+IS_D 37
+SUB ; a=123 | [d=37]=11 a=115='s'
+
+GOTO_D 36
+IS_D 36;
+SUB
+A_OUT; print 'd'
+
+SHIFT 38 ;shift [d=38]=14 once to get [d=38]=14
+
+SHIFT 39 ; shift [d=39]=, 10 times to get [d=39]=125, a=125
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+SHIFT 39
+
+GOTO_D 38
+IS_D 38
+SUB ; subtract a=125 | [d=39]=14 = 111 = 'o'
+
+NOOP ;39
+NOOP ;40
+NOOP ;41
+IS_D 42
+SUB ;a=111 | [d=42]=42 = 105
+A_OUT ;print 'i'
+
+GOTO_D 37 ; 's' is still in [d=37]
+
+SHIFT 37 ; shift it 10 times to swap it into a
+SHIFT 37
+SHIFT 37
+SHIFT 37
+SHIFT 37
+SHIFT 37
+SHIFT 37
+SHIFT 37
+SHIFT 37
+SHIFT 37
+
+A_OUT ;s is still in [d=37]
+EXIT

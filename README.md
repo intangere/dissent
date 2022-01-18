@@ -5,6 +5,13 @@ An intermediate language that outputs valid Dis code.
 ### What is Dis?
 Dis is a mitigated variant of Malbolge. Consequently and sadly, the interest in Dis by the community seems to be low.
 
+````
+^!_______________________________>*!*!*}!{*!!_____________________________
+_____________________*___>__*_______>_*_______>_*_______>_*_______>_*_____
+__>_*_______>_*_______>_*_______>_*_______>_*_______>_*___|__*__|{>>*_____
+>*_____>*_____>*_____>*_____>*_____>*_____>*_____>*_____>*____|___|{*___>_
+_*___>__*___>__*___>__*___>__*___>__*___>__*___>__*___>__*___>{!
+````
 ### Features
 - Shift (>) and Subtract (|) automatically calculates, moves internal d pointer, and inserts the instructions to set the d pointer where you need it
 - JUMP (^) has an internal code pointer so placeholder values are no longer needed
