@@ -1,0 +1,13 @@
+; set data
+SET 43, EXCLAMATION
+SET 44, PIPE
+SET 45, PIPE
+SET 46, ASTERISK
+
+SET_D ;d=42
+JUMP ;d=43,c=95,[d]=33
+SET_C 34 ;special instruction to avoid placeholders
+IN
+A_OUT
+SET_D
+JUMP

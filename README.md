@@ -56,6 +56,7 @@ Dis https://lutter.cc/dis/
 ### Notes
 - GOTO operator does not support jumping to locations below 34, although this is intended
  - This is easily proven through the use of IS_D. `IS_D 33` and below will always fail
+- Make sure to define your data that operations need at the start of the program. Otherwise you will encounter undefined behavior due to the partial execution
  
 ### Problems
 - IS_A does not work as partial code execution would have to take place

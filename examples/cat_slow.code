@@ -1,0 +1,4 @@
+SET 0, CARET ;Insert jump without jumping. I should really change this
+SET_C 1
+IN
+A_OUT

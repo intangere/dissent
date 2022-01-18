@@ -1,0 +1,15 @@
+;setup data section
+SET 43, LBRACE
+SET 44, ASTERISK
+SET 45, ASTERISK
+
+;code
+SET_D  ;d=42
+SHIFT  ;a=41
+SHIFT  ;a=14
+SET_D  ;d=42
+SUB 43 ;a=54,14|41=54
+A_OUT ;print
+A_OUT ;print
+A_OUT ;print
+EXIT
