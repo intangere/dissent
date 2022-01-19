@@ -34,8 +34,11 @@ class Assembler():
 
            #The ignore_ptrs condition isnt exactly right. (May be correct now)
            #Why does "or d in ignore_ptrs" wrk and not "and not d in ignore_ptrs"
-           while self.mem[self.d] != 0 and self.mem[self.d] != operators['EXCLAMATION'] or self.d in self.ignore_ptrs:
-               self.mem[self.c] = operators['UNDERSCORE']
+           #while self.d in self.ignore_ptrs:
+           #while (self.mem[self.d] != 0) or self.d in self.ignore_ptrs or (self.mem[self.d] != operators['EXCLAMATION']):
+           while (self.mem[self.d] != 0 and self.mem[self.d] != operators['EXCLAMATION']) or self.d in self.ignore_ptrs:
+               #print(self.c, self.mem[self.d], self.ignore_ptrs)
+               #self.mem[self.c] = operators['UNDERSCORE']
                self.c+=1
                self.d+=1
 
@@ -72,7 +75,7 @@ class Assembler():
               continue
            if op == 'SET_D':
               self.mem[self.c] = operators['ASTERISK']
-              self.d = self.mem[self.c]
+              self.d = self.mem[self.d] #not self.mem[self.c]
            if op == 'A_OUT':
               self.mem[self.c] = operators['LBRACE']
            if op == 'SUB': #This fill method is completely wrong if less than d
@@ -118,9 +121,11 @@ class Assembler():
               self.mem[self.c] = operators['EXCLAMATION']
            if op == 'JUMP':
               self.mem[self.c] = operators['CARET']
+              #self.c += 1
+              #self.d += 1 #This really is supposed to be increased. big bug
               self.c = self.mem[self.d]
-              if self.mem[self.c-1] == 0: #Index is off by 1 so fixes a problem with obfscation
-                 self.mem[self.c-1] = operators['UNDERSCORE'] #This may be fake news actually
+              #if self.mem[self.c-1] == 0: #Index is off by 1 so fixes a problem with obfscation
+              #   self.mem[self.c-1] = operators['UNDERSCORE'] #This may be fake news actually
            if op == 'IN':
               self.mem[self.c] = operators['RBRACE']
            if op == 'NOOP':
@@ -128,6 +133,11 @@ class Assembler():
            if op == 'IS_D':
               if self.lookup(self.d) != self.lookup(args[0]):
                  log('ERROR', 'Validation failed. d=%s not %s' % (self.lookup(self.d), args[0]))
+                 sys.exit(1)
+              continue
+           if op == 'IS_C':
+              if self.lookup(self.c) != self.lookup(args[0]):
+                 log('ERROR', 'Validation failed. c=%s not %s' % (self.lookup(self.c), args[0]))
                  sys.exit(1)
               continue
            if op == 'IS_A':
@@ -169,6 +179,7 @@ def shift(num):
 
 def set(mem, idx, value):
     mem[idx] = value
+    #self.ignore_ptrs.append(idx)
 
 def find_program_end(mem):
     i = len(mem) - 1

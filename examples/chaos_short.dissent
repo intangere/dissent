@@ -6,17 +6,27 @@ SET 36, ASTERISK
 SET 37, EXCLAMATION
 SET 38, ASTERISK
 SET 39, RBRACE
-SET 40, EXCLAMATION
 SET 41, LBRACE
-;SET 43, ASTERISK
+SET 47, ASTERISK
 
 ;executable code
-JUMP ;c=95 [c]=33
-IS_C 95
+SET_D ;d=42
+JUMP ;d=47,c=95,[d]=33
+;SET_C 34 ;special instruction to avoid placeholders
 
-SUB 43
-SUB 43 ; 0 in 43
-; it seems there is a mismatch with the code pointer
+NOOP
+NOOP
+NOOP
+NOOP
+NOOP
+NOOP
+NOOP
+NOOP
+NOOP
+NOOP
+
+SUB 47
+SUB 47 ; 0 in 47
 
 ; shift [d=35]=33, 9 times to get 99 in a and [d=35]=99
 SHIFT 35
@@ -54,9 +64,9 @@ IS_D 35
 ; so we reshift 11, 10 times to get it into a while 186 remains in [d=35]
 ; put 35 into a as 11
 
-SHIFT 43; 0 in a
+SHIFT 47; 0 in a
 SUB 35
-SHIFT 43
+SHIFT 47
 SUB 35 ;a=11
 
 ; jump back to 34
@@ -85,9 +95,9 @@ A_OUT ; print 'a'
 
 SHIFT 38 ;shift [d=38]=14 once to get [d=38]=14
 
-SHIFT 43 ; 0 in a
+SHIFT 47 ; 0 in a
 SUB 39
-SHIFT 43
+SHIFT 47
 SUB 39 ;a=125
 
 GOTO_D 38
@@ -97,9 +107,9 @@ A_OUT ; print 'o'
 
 SHIFT 37 ; shift [d=37]=33 once to get [d=37]=11
 
-SHIFT 43
+SHIFT 47
 SUB 41
-SHIFT 43
+SHIFT 47
 SUB 41 ;a=123
 
 GOTO_D 37

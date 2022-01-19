@@ -43,7 +43,8 @@ I may write a standard library with macros that inserts the values you want at c
 | SHIFT [int]  |  Shift the value at d to the right by 1 at the current data pointer d. If a integer is specified > 33, the assembler will insert code to jump to that memory location and insert the > operator. The pointer a is also set to the shifted value. |  >  |
 |  SUB [int] |  Trinary subtraction without borrow between pointer a and data pointer d. As with SHIFT, the assembler will jump the data pointer to the integer given, then execute the subtraction. |  &#124;  |
 | JUMP  | Set code pointer c to the value pointed to by data pointer d. The internal code pointer is adjusted so placeholder values are automatically handled and should not be manually inserted.  | ^  |
-|  IS_D int | Validates that the data pointer d is at the exepcted location otherwise an error is thrown  | None  |
+|  IS_D int | Validates that the data pointer d is at the expected location otherwise an error is thrown  | None  |
+|  IS_C int | Validates that the code pointer c is at the expected location otherwise an error is thrown  | None  |
 |  IS_A int | Validates that the pointer a is the value we expect it to be otherwise an error is thrown  | None  |
 | A_OUT | Output the pointer a to stdout | { |
 | IN | Get one character from stdin and store it in a | } |
@@ -64,8 +65,14 @@ Dis https://lutter.cc/dis/
 ### Notes
 - GOTO operator does not support jumping to locations below 34, although this is intended
  - This is easily proven through the use of IS_D. `IS_D 33` and below will always fail
+ - If you have a 0 at some [d], you can goto that location and `SET_D` to jump the data pointer d lower than 33
 - Make sure to define your data that operations need at the start of the program. Otherwise you will encounter undefined behavior due to the partial execution
+- The assembler will not prevent you from writing invalid code that may get stuck looping, but by using `IS_D` and `IS_C` you can prevent the code pointer and data pointer from being at an unexpected place
  
+### Tips
+- The easiest way to create a "memory/data space" is to jump the code pointer further into memory so that any value under where you jump to can be modified for operations
+- To put a value from d into a efficiently, pick a location in the "data space" and double subtract it to get a 0 at both [d] and a. Whenever you need the 0 in a, just shift that value since shifting 0 remains 0 and places it into a. If you need it at d just `GOTO` that cell
+
 ### Problems
 - IS_A does not work as partial code execution would have to take place
 - Macros do not take arguments yet
