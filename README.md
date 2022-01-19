@@ -59,6 +59,17 @@ See `examples/`
 Format: `python3 dissent.py <file name> --[options]`  
 Example: `python3 dissent.py examples/999.code --fill-random`
 
+### Running Dis Code
+You can use my interpreter at https://github.com/intangere/dis
+```
+python3 dis.py example.dis
+```
+Or you can use the original interpreter from https://lutter.cc/dis/dis.c
+```
+gcc dis.c
+./a.out example.dis
+```
+
 ### References
 Dis https://lutter.cc/dis/
 
