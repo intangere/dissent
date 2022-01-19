@@ -70,7 +70,7 @@ Dis https://lutter.cc/dis/
 - The assembler will not prevent you from writing invalid code that may get stuck looping, but by using `IS_D` and `IS_C` you can prevent the code pointer and data pointer from being at an unexpected place
  
 ### Tips
-- The easiest way to create a "memory/data space" is to jump the code pointer further into memory so that any value under where you jump to can be modified for operations
+- The easiest way to create a "memory/data space" is to jump the code pointer further into memory so that any value under where you jump to can be modified for operations. Then make data pointer d loop constantly under that value. So you can jump c to 42 and keep d looping 33-42 or jump c to 95 and keep d looping 33-95 but more efficently 33-42+
 - To put a value from d into a efficiently, pick a location in the "data space" and double subtract it to get a 0 at both [d] and a. Whenever you need the 0 in a, just shift that value since shifting 0 remains 0 and places it into a. If you need it at d just `GOTO` that cell
 
 ### Problems
