@@ -2,7 +2,7 @@
 SET 43, EXCLAMATION
 
 SET_D
-SUB 43
+SUB 43 ; put 9 into a
 A_OUT
 A_OUT
 A_OUT

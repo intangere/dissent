@@ -16,6 +16,135 @@ operators = { 'EXCLAMATION' : ord('!'),
 
 DEBUG = False
 
+class Assembler():
+    def __init__(self):
+        self.a = 0
+        self.d = 0
+        self.c = 0
+        self.mem = [0] * 59049
+        self.ignore_ptrs = [] #Rename this, memory locations that will be modified
+        #meaning they cannot be relied on for jumps in loops or persistent data
+        self.queue = [] #Queue of instructions for partial execution (not done)
+
+    def goto(self, loc):
+        if self.d != loc:
+
+           log('INFO', 'Need to insert instructions for GOTO')
+           log('INFO', 'd=%s, required=%s' % (self.d, loc))
+
+           #The ignore_ptrs condition isnt exactly right. (May be correct now)
+           #Why does "or d in ignore_ptrs" wrk and not "and not d in ignore_ptrs"
+           while self.mem[self.d] != 0 and self.mem[self.d] != operators['EXCLAMATION'] or self.d in self.ignore_ptrs:
+               self.mem[self.c] = operators['UNDERSCORE']
+               self.c+=1
+               self.d+=1
+
+           self.mem[self.d] = operators['EXCLAMATION']
+           self.mem[self.c] = operators['ASTERISK']
+           #ignore_ptrs.append(d)
+           self.d = self.mem[self.d]
+           self.d += 1
+           self.c += 1
+
+           while self.d < loc:
+              self.mem[self.c] = operators['UNDERSCORE']
+              self.d += 1
+              self.c += 1
+        else:
+            log('INFO|GOTO', 'd is already at %s. Ignoring' % loc)
+
+    def lookup(self, ptr):
+        """If a pointer adjustment needs to be made"""
+        return ptr
+
+    def assemble(self, program):
+
+       for i, instruction in enumerate(program):
+           op = instruction[0]
+           args = instruction[1]
+           original_d = self.d
+
+           if op == 'SET':
+              self.mem[args[0]] = args[1]
+              continue
+           if op == 'SET_C':
+              self.c = args[0]
+              continue
+           if op == 'SET_D':
+              self.mem[self.c] = operators['ASTERISK']
+              self.d = self.mem[self.c]
+           if op == 'A_OUT':
+              self.mem[self.c] = operators['LBRACE']
+           if op == 'SUB': #This fill method is completely wrong if less than d
+              if len(args) == 0:
+                 args = [self.d]
+              else:
+                 args[0] = self.lookup(args[0])
+              self.goto(args[0]) #this should be good
+              self.ignore_ptrs.append(self.d)
+              self.mem[self.c] = operators['PIPE']
+
+           if op == 'SHIFT':
+              if len(args) == 0:
+                 args = [self.d]
+              else:
+                 args[0] = self.lookup(args[0])
+              self.goto(args[0]) #This should be good
+              self.ignore_ptrs.append(args[0]) #self.d
+              self.mem[self.c] = operators['RCHEVRON']
+              self.queue.append('shift')
+              #a = shift(mem[d+1])
+           if op == 'ISWAP': #Inefficent way to put d into a, shift 10 times
+              if len(args) == 0:
+                 args = [self.d]
+              else:
+                 args[0] = self.lookup(args[0])
+              for _ in range(10):
+                  self.goto(args[0]) #This should be good
+                  self.ignore_ptrs.append(self.d)
+                  self.mem[self.c] = operators['RCHEVRON']
+                  self.queue.append('shift')
+                  self.c += 1
+                  self.d += 1
+              continue
+           if op == 'GOTO_D':
+              if len(args) == 0:
+                 args = [self.d]
+              else:
+                 args[0] = self.lookup(args[0])
+              self.goto(args[0])
+              continue
+           if op == 'EXIT':
+              self.mem[self.c] = operators['EXCLAMATION']
+           if op == 'JUMP':
+              self.mem[self.c] = operators['CARET']
+              self.c = self.mem[self.d]
+              if self.mem[self.c-1] == 0: #Index is off by 1 so fixes a problem with obfscation
+                 self.mem[self.c-1] = operators['UNDERSCORE'] #This may be fake news actually
+           if op == 'IN':
+              self.mem[self.c] = operators['RBRACE']
+           if op == 'NOOP':
+              self.mem[self.c] = operators['UNDERSCORE']
+           if op == 'IS_D':
+              if self.lookup(self.d) != self.lookup(args[0]):
+                 log('ERROR', 'Validation failed. d=%s not %s' % (self.lookup(self.d), args[0]))
+                 sys.exit(1)
+              continue
+           if op == 'IS_A':
+              if self.a != args[0]:
+                 log('ERROR', 'IS_A broken!. Validation failed. a=%s not %s' % (self.a, args[0]))
+                 sys.exit(1)
+              continue
+
+           self.c += 1
+           self.d += 1
+
+           while len(self.queue) > 0:
+              oper = self.queue.pop()
+              if oper == 'shift':
+                 self.a = shift(self.mem[self.d])
+       return self.mem
+
 def log(info, msg):
     if DEBUG or info == 'ERROR':
        print('[%s]: %s' % (info, msg))
@@ -130,7 +259,6 @@ def parse_program(instructions):
                args[i] = int(arg)
         program.append((op, args))
 
-    #print(program)
     return program, macros
 
 if __name__ == '__main__':
@@ -140,11 +268,6 @@ if __name__ == '__main__':
 
    if '--debug' in sys.argv:
       DEBUG = True
-
-   mem = [0] * 59049
-   ignore_ptrs = [] #memory locations that will be modified
-   #meaning they cannot be relied on for jumps in loops or persistent data
-
 
    program = []
    macros = []
@@ -156,146 +279,9 @@ if __name__ == '__main__':
 
    #print(macros)
 
-   c = 0
-   d = 0
-   a = 0
+   assembler = Assembler()
 
-   queue = []
-
-   for i, instruction in enumerate(program):
-       op = instruction[0]
-       args = instruction[1]
-       if op == 'SET':
-          set(mem, args[0], args[1])
-          continue
-       if op == 'SET_C':
-          c = args[0]
-          continue
-       if op == 'SET_D':
-          mem[c] = operators['ASTERISK']
-          d = mem[c]
-       if op == 'A_OUT':
-          mem[c] = operators['LBRACE']
-       if op == 'SUB': #This fill method is completely wrong if less than d
-          if len(args) == 0:
-             args = [d]
-
-          if d != args[0]:
-             log('INFO', 'Need to insert instructions for sub')
-             log('INFO', 'd=%s, required=%s' % (d, args[0]))
-             if args[0] < d:
-                while d < args[0]:
-                    mem[c] = operators['UNDERSCORE']
-                    c += 1
-                    d += 1
-             else:
-                mem[c] = operators['ASTERISK']
-                c += 1
-                d = 33
-                while d < args[0]:
-                    mem[c] = operators['UNDERSCORE']
-                    d += 1
-                    c += 1
-          mem[c] = operators['PIPE']
-
-       """
-       We could  do like
-       d = 42, required = 33,
-       while d != 0, noop, then insert ! at the first 0, then * it
-       """
-       if op == 'SHIFT':
-          if len(args) == 0:
-             args = [d]
-
-          if d != args[0]:
-
-             log('INFO', 'Need to insert instructions for shift')
-             log('INFO', 'd=%s, required=%s' % (d, args[0]))
-
-             while mem[d] != 0 and mem[d] != operators['EXCLAMATION'] or d in ignore_ptrs:
-                 mem[c] = operators['UNDERSCORE']
-                 c+=1
-                 d+=1
-
-             mem[d] = operators['EXCLAMATION']
-             mem[c] = operators['ASTERISK']
-
-             d = mem[d]
-             d += 1
-             c += 1
-
-             while d < args[0]:
-                mem[c] = operators['UNDERSCORE']
-                d += 1
-                c += 1
-
-             ignore_ptrs.append(d)
-             mem[c] = operators['RCHEVRON']
-          else:
-              log('INFO', 'd is equal for shift')
-              mem[c] = operators['RCHEVRON']
-          queue.append('shift')
-          #a = shift(mem[d+1])
-       if op == 'GOTO_D':
-          if len(args) == 0:
-             args = [d]
-
-          if d != args[0]:
-
-             log('INFO', 'Need to insert instructions for GOTO')
-             log('INFO', 'd=%s, required=%s' % (d, args[0]))
-
-             #The ignore_ptrs condition isnt exactly right. (May be correct now)
-             while mem[d] != 0 and mem[d] != operators['EXCLAMATION'] and d not in ignore_ptrs:
-                 mem[c] = operators['UNDERSCORE']
-                 c+=1
-                 d+=1
-
-             mem[d] = operators['EXCLAMATION']
-             mem[c] = operators['ASTERISK']
-             #ignore_ptrs.append(d)
-             d = mem[d]
-             d += 1
-             c += 1
-
-             while d < args[0]:
-                mem[c] = operators['UNDERSCORE']
-                d += 1
-                c += 1
-             continue
-          else:
-              log('INFO|GOTO', 'd is already at %s. Ignoring' % args[0])
-              continue
-              #mem[c] = operators['RCHEVRON']
-       if op == 'EXIT':
-          mem[c] = operators['EXCLAMATION']
-       if op == 'JUMP':
-          mem[c] = operators['CARET']
-          c = mem[d]
-          if mem[c-1] == 0: #Index is off by 1 so fixes a problem with obfscation
-             mem[c-1] = operators['UNDERSCORE']
-       if op == 'IN':
-          mem[c] = operators['RBRACE']
-       if op == 'NOOP':
-          mem[c] = operators['UNDERSCORE']
-       if op == 'IS_D':
-          if d != args[0]:
-             log('ERROR', 'Validation failed. d=%s not %s' % (d, args[0]))
-             sys.exit(1)
-          continue
-       if op == 'IS_A':
-          if a != args[0]:
-             log('ERROR|IS_A broken', 'Validation failed. a=%s not %s' % (a, args[0]))
-             sys.exit(1)
-          continue
-       c += 1
-       d += 1
-
-       while len(queue) > 0:
-          oper = queue.pop()
-          if oper == 'shift':
-             a = shift(mem[d])
-
+   mem = assembler.assemble(program)
 
    if '--fill-lines' in sys.argv:
       mem = fill_noops(mem, op=operators['PIPE'])

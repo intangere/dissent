@@ -1,0 +1,11 @@
+SET 35, ASTERISK
+SET 36, ASTERISK,
+SET 37, ASTERISK
+
+JUMP ;c=95, d=1
+SUB 35
+SUB 35 ;0 in a
+
+;now you can shift 35,sub,shift 35, sub
+;to put a value from d into a
+EXIT

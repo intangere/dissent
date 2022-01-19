@@ -9,21 +9,21 @@ SET 39, RBRACE
 SET 41, LBRACE
 SET 42, ASTERISK
 
+SET 43, ASTERISK
+
 ;executable code
 JUMP ;c=95 [c]=33
 
+SUB 43
+SUB 43 ; double subtract to put 0 into 43
+
 SHIFT 37 ; shift [d=37]=33 once to get [d=37]=11
 
-SHIFT 41 ;shift [d=41]=125, 10 times to get a=123
-SHIFT 41
-SHIFT 41
-SHIFT 41
-SHIFT 41
-SHIFT 41
-SHIFT 41
-SHIFT 41
-SHIFT 41
-SHIFT 41
+;put value at [d] into a
+SHIFT 43 ;load 0 into a
+SUB 41
+SHIFT 43
+SUB 41 ; a=123
 
 GOTO_D 37
 IS_D 37
@@ -36,16 +36,10 @@ A_OUT; print 'd'
 
 SHIFT 38 ;shift [d=38]=14 once to get [d=38]=14
 
-SHIFT 39 ; shift [d=39]=, 10 times to get [d=39]=125, a=125
-SHIFT 39
-SHIFT 39
-SHIFT 39
-SHIFT 39
-SHIFT 39
-SHIFT 39
-SHIFT 39
-SHIFT 39
-SHIFT 39
+SHIFT 43 ;0 into a
+SUB 39
+SHIFT 43
+SUB 39 ;a=123
 
 GOTO_D 38
 IS_D 38
@@ -60,16 +54,10 @@ A_OUT ;print 'i'
 
 GOTO_D 37 ; 's' is still in [d=37]
 
-SHIFT 37 ; shift it 10 times to swap it into a
-SHIFT 37
-SHIFT 37
-SHIFT 37
-SHIFT 37
-SHIFT 37
-SHIFT 37
-SHIFT 37
-SHIFT 37
-SHIFT 37
+SHIFT 43
+SUB 37
+SHIFT 43
+SUB 37 ; 's' into a
 
 A_OUT ;s is still in [d=37]
 EXIT

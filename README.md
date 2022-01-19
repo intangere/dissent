@@ -6,12 +6,12 @@ An intermediate language that outputs valid Dis code.
 Dis is a mitigated variant of Malbolge. Consequently and sadly, the interest in Dis by the community seems to be low.
 
 ````
-^!_______________________________>*!*!*}!{*!!_____________________________
-_____________________*___>__*_______>_*_______>_*_______>_*_______>_*_____
-__>_*_______>_*_______>_*_______>_*_______>_*_______>_*___|__*__|{>>*_____
->*_____>*_____>*_____>*_____>*_____>*_____>*_____>*_____>*____|___|{*___>_
-_*___>__*___>__*___>__*___>__*___>__*___>__*___>__*___>__*___>{!
+^!_______________________________>*!*!*}!{**!_____________________________
+_____________________*_________|*_________|*___>__*_________>*_______|__*_
+________>*_______|__*___|__*__|{>_*_________>*_____|*_________>*_____|*___
+_|___|{*______*_________>*___|__*_________>*___|{!
 ````
+
 ### Features
 - Shift (>) and Subtract (|) automatically calculates, moves internal d pointer, and inserts the instructions to set the d pointer where you need it
 - JUMP (^) has an internal code pointer so placeholder values are no longer needed
@@ -49,6 +49,7 @@ I may write a standard library with macros that inserts the values you want at c
 | IN | Get one character from stdin and store it in a | } |
 | MACRO [name] [code body] END_MACRO| Create a set of code that can be called by name | None |
 | ; [comment here] | Everything after the semi-colon is a comment and is ignored | (comment here)|
+| ISHIFT | Inefficent operator to put the value of d into a by calling SHIFT d 10 times| i.e *__> 10 times |  
 
 ### Examples
 See `examples/`  
