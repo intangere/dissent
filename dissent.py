@@ -38,7 +38,7 @@ class Assembler():
            #while (self.mem[self.d] != 0) or self.d in self.ignore_ptrs or (self.mem[self.d] != operators['EXCLAMATION']):
            while (self.mem[self.d] != 0 and self.mem[self.d] != operators['EXCLAMATION']) or self.d in self.ignore_ptrs:
                #print(self.c, self.mem[self.d], self.ignore_ptrs)
-               #self.mem[self.c] = operators['UNDERSCORE']
+               self.mem[self.c] = operators['UNDERSCORE']
                self.c+=1
                self.d+=1
 
